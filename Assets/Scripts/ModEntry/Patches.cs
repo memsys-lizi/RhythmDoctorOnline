@@ -59,7 +59,7 @@ namespace ModEntry
             {
                 if (key == "mainMenu." + modName)
                 {
-                    __result = modName;
+                    __result = "多人游戏";
                     exists = true;
                     return false;
                 }
