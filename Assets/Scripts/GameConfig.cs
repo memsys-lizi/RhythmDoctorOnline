@@ -13,12 +13,12 @@ namespace RDOnline
         public bool IsDev = true;
 
         [Header("服务器配置")]
-        public string DevServerUrl = "localhost:4005";
-        public string ProdServerUrl = "69.165.65.93:4005";
+        public string DevServerUrl = "localhost:3005";
+        public string ProdServerUrl = "69.165.65.93:3005";
 
         [Header("123 云盘 Token")]
-        public string Pan123TokenUrlDev = "http://localhost:4004/pan123/token";
-        public string Pan123TokenUrlProd = "https://adofaionlineapi.adofaitools.top/pan123/token";
+        public string Pan123TokenUrlDev = "http://localhost:3004/pan123/token";
+        public string Pan123TokenUrlProd = "https://rdonlineapi.rhythmdoctor.top/pan123/token";
 
         [Header("BPM配置")]
         public float BPM = 120f;
