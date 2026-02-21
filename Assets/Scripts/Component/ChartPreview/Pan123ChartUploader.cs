@@ -14,7 +14,6 @@ namespace RDOnline.Component
     /// </summary>
     public static class Pan123ChartUploader
     {
-        private const string TokenUrl = "https://adofaionlineapi.adofaitools.top/pan123/token";
         private const string OpenApiHost = "https://open-api.123pan.com";
         private const string DirectLinkPath = "/api/v1/direct-link/url";
         private const int ParentFileId = 32947250;
@@ -43,6 +42,13 @@ namespace RDOnline.Component
                 yield break;
             }
 
+            if (GameConfig.Instance == null)
+            {
+                onError?.Invoke("游戏配置未就绪");
+                yield break;
+            }
+            string tokenUrl = GameConfig.Instance.Pan123TokenUrl;
+
             // 1. 获取 token（带重试）
             string token = null;
             for (int attempt = 0; attempt < MaxRetries; attempt++)
@@ -50,7 +56,7 @@ namespace RDOnline.Component
                 if (attempt > 0)
                     yield return new WaitForSeconds(RetryDelaySeconds);
 
-                using (var req = UnityWebRequest.Get(TokenUrl))
+                using (var req = UnityWebRequest.Get(tokenUrl))
                 {
                     req.SendWebRequest();
                     while (!req.isDone)
