@@ -124,7 +124,7 @@ namespace RDOnline.Utils
         public string score => ToString();
         public override string ToString()
         {
-            return $"总计: 提前{earlyOffsetsSum}帧, 滞后{lateOffsetsSum}帧, 总共{totalOffsetsSum}帧 判定: {mistakes} 评分: {rank}";
+            return $"总计: 提前{earlyOffsetsSum}帧, 滞后{lateOffsetsSum}帧, 总共{totalOffsetsSum}帧, 失误: {mistakes} 评分: {rank}";
         }
     }
 #endif
