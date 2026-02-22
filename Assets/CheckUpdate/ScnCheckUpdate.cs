@@ -118,7 +118,6 @@ public class ScnCheckUpdate : MonoBehaviour
         {
             Debug.LogException(e);
         }
-        
     }
 
     private IEnumerator CheckUpdateCoroutine()

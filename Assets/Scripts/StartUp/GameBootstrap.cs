@@ -14,7 +14,7 @@ namespace RDOnline
             try
             {
                 Harmony harmony = new Harmony("RDOnline.GameBootstrap");
-                harmony.PatchAll(typeof(Patches));
+                harmony.PatchAll();
             }
             catch (Exception e)
             {

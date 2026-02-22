@@ -5,6 +5,7 @@ using System.Reflection;
 using HarmonyLib;
 using Newtonsoft.Json;
 using RDOnline.Utils;
+using UnityEngine;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
@@ -41,6 +42,7 @@ namespace RDOnline
                         mistakesP2 = __instance.mistakesManager.mistakesP2
                     };
                     RankScore = rankScore;
+                    Cursor.visible = true;
                 }
                 catch (Exception ex)
                 {
