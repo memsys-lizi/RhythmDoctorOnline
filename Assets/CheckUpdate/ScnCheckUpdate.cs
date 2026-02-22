@@ -445,7 +445,7 @@ public class ScnCheckUpdate : MonoBehaviour
     {
         if (success)
         {
-            SetTitle("欢迎来到ADOFAI Online");
+            SetTitle("欢迎来到RD Online");
             if (checkUpdatePanel != null)
             {
                 checkUpdatePanel.DOFade(0f, fadeDuration)
