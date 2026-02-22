@@ -11,7 +11,7 @@ namespace RDOnline.Auth
     {
         [Header("场景设置")]
         [Tooltip("目标场景名称")]
-        public string TargetSceneName = "scnLevelSelect";
+        public string TargetSceneName = "scnMenu";
         [Tooltip("切换场景前是否断开服务器连接")]
         public bool DisconnectBeforeNavigate = true;
 
@@ -32,7 +32,7 @@ namespace RDOnline.Auth
         /// <summary>
         /// 执行离开：断开连接（可选）并加载目标场景
         /// </summary>
-        private void DoNavigate()
+        public void DoNavigate()
         {
             if (string.IsNullOrEmpty(TargetSceneName))
             {
