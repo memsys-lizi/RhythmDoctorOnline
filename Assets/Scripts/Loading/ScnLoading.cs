@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
-using DG.Tweening;
 
 public class ScnLoading : MonoBehaviour
 {
@@ -15,34 +13,20 @@ public class ScnLoading : MonoBehaviour
     }
 
     [Header("UI组件")]
-    [Tooltip("画布组（控制透明度）")]
-    public CanvasGroup canvasGroup;
-    [Tooltip("画布进入退出动画图片")]
-    public Image canvasEnterImage;
-    [Tooltip("进度条图片")]
-    public Image progressImage;
-    [Tooltip("进度百分比文本")]
-    public TMP_Text progressText;
+    [Tooltip("动画控制器")]
+    public Animator animator;
+    [Tooltip("进度条")]
+    public Slider progressSlider;
+    [Tooltip("百分比文本")]
+    public Text progressText;
     [Tooltip("提示文本")]
-    public TMP_Text tipText;
+    public Text tipText;
 
     [Header("时间设置")]
     [Tooltip("最低显示时间（秒）")]
     public float minimumLoadTime = 3f;
-    [Tooltip("画布进入动画持续时间（秒）")]
-    public float canvasEnterDuration = 0.3f;
-    [Tooltip("画布退出动画持续时间（秒）")]
-    public float canvasExitDuration = 0.3f;
-    [Tooltip("淡入淡出持续时间（秒）")]
-    public float fadeDuration = 0.5f;
-    [Tooltip("进度条平滑速度")]
-    public float progressSmoothSpeed = 2f;
-
-    [Header("音效设置")]
-    [Tooltip("画布进入音效")]
-    public AudioClip enterSound;
-    [Tooltip("画布退出音效")]
-    public AudioClip exitSound;
+    [Tooltip("结束动画等待时间（秒）")]
+    public float endWaitTime = 3f;
 
     // 加载状态
     private bool isLoading = false;
@@ -59,113 +43,25 @@ public class ScnLoading : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         // 初始化时自动获取组件
-        if (canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
-        if (progressImage == null)
-            progressImage = GetComponentInChildren<Image>();
-        if (tipText == null)
-            tipText = GetComponentInChildren<TMP_Text>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+        if (progressSlider == null)
+            progressSlider = GetComponentInChildren<Slider>();
 
-        // 确保初始状态为隐藏
-        if (canvasGroup != null)
+        // 获取所有Text组件并分配
+        if (progressText == null || tipText == null)
         {
-            canvasGroup.alpha = 0f;
-            canvasGroup.blocksRaycasts = false; // 初始状态不拦截点击
+            Text[] textComponents = GetComponentsInChildren<Text>();
+            foreach (Text text in textComponents)
+            {
+                if (text.name.ToLower().Contains("tip") && tipText == null)
+                    tipText = text;
+                else if (text.name.ToLower().Contains("progress") || text.name.ToLower().Contains("percent"))
+                    progressText = text;
+                else if (progressText == null)
+                    progressText = text; // 默认第一个Text作为进度文本
+            }
         }
-        if (canvasEnterImage != null)
-        {
-            Vector3 scale = canvasEnterImage.transform.localScale;
-            scale.x = 0f;
-            canvasEnterImage.transform.localScale = scale;
-        }
-
-        // 初始化进度条为0%
-        UpdateLoadingUI(0f);
-    }
-
-    /// <summary>
-    /// 播放音效
-    /// </summary>
-    void PlaySound(AudioClip clip)
-    {
-        if (clip != null)
-        {
-            AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position);
-        }
-    }
-
-    /// <summary>
-    /// 画布进入动画协程（完整流程）
-    /// </summary>
-    IEnumerator CanvasEnter()
-    {
-        // 启用射线检测，阻止点击穿透
-        if (canvasGroup != null)
-            canvasGroup.blocksRaycasts = true;
-
-        // 1. 播放画布进入动画（Image X缩放 0→1）
-        if (canvasEnterImage != null)
-        {
-            PlaySound(enterSound);
-            yield return canvasEnterImage.transform.DOScaleX(1f, canvasEnterDuration).SetEase(Ease.OutCubic).WaitForCompletion();
-        }
-
-        // 2. 淡入显示CanvasGroup
-        yield return StartCoroutine(FadeIn());
-    }
-
-    /// <summary>
-    /// 画布退出动画协程（完整流程）
-    /// </summary>
-    IEnumerator CanvasExit()
-    {
-        // 1. 淡出隐藏CanvasGroup
-        yield return StartCoroutine(FadeOut());
-
-        // 2. 播放画布退出动画（Image X缩放 1→0）
-        if (canvasEnterImage != null)
-        {
-            PlaySound(exitSound);
-            yield return canvasEnterImage.transform.DOScaleX(0f, canvasExitDuration).SetEase(Ease.InCubic).WaitForCompletion();
-        }
-
-        // 禁用射线检测，允许点击穿透
-        if (canvasGroup != null)
-            canvasGroup.blocksRaycasts = false;
-    }
-
-    /// <summary>
-    /// 淡入效果协程
-    /// </summary>
-    IEnumerator FadeIn()
-    {
-        if (canvasGroup == null) yield break;
-
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
-        {
-            elapsed += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed / fadeDuration);
-            yield return null;
-        }
-        canvasGroup.alpha = 1f;
-    }
-
-    /// <summary>
-    /// 淡出效果协程
-    /// </summary>
-    IEnumerator FadeOut()
-    {
-        if (canvasGroup == null) yield break;
-
-        float elapsed = 0f;
-        while (elapsed < fadeDuration)
-        {
-            elapsed += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / fadeDuration);
-            yield return null;
-        }
-        canvasGroup.alpha = 0f;
     }
 
     /// <summary>
@@ -238,22 +134,25 @@ public class ScnLoading : MonoBehaviour
     IEnumerator LoadingSequence(string sceneName)
     {
         isLoading = true;
-
-        // 重置进度条为0%（在动画开始前）
-        UpdateLoadingUI(0f);
-
+        
         // 设置随机提示
         if (tipText != null)
         {
             tipText.text = ScrTips.GetFormattedTips();
         }
-
+        
         // 等待一帧确保界面完全激活
         yield return null;
-
-        // 画布进入动画（Image缩放 + CanvasGroup淡入）
-        yield return StartCoroutine(CanvasEnter());
-
+        
+        // 播放开始动画
+        if (animator != null)
+        {
+            animator.Play("loading_start");
+        }
+        
+        // 等待开始动画播放
+        yield return new WaitForSeconds(0.5f);
+        
         // 开始异步加载目标场景
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         asyncLoad.allowSceneActivation = false;
@@ -261,29 +160,21 @@ public class ScnLoading : MonoBehaviour
         // 进度更新循环
         float startTime = Time.time;
         bool realLoadComplete = false;
-        float displayProgress = 0f; // 显示进度（平滑插值）
-
+        
         while (true)
         {
             float elapsedTime = Time.time - startTime;
             float realProgress = asyncLoad.progress;
-
+            
             // 检查真实加载是否完成
             if (asyncLoad.progress >= 0.9f && !realLoadComplete)
             {
                 realLoadComplete = true;
             }
-
-            // 计算目标进度（真实加载完成后卡在99%，直到达到最低显示时间）
-            float targetProgress = realProgress;
-            if (realLoadComplete && elapsedTime < minimumLoadTime)
-            {
-                targetProgress = 0.99f;
-            }
-
-            // 平滑插值更新显示进度
-            displayProgress = Mathf.Lerp(displayProgress, targetProgress, Time.deltaTime * progressSmoothSpeed);
-
+            
+            // 计算显示进度
+            float displayProgress = CalculateDisplayProgress(elapsedTime, realProgress, realLoadComplete);
+            
             // 更新UI
             UpdateLoadingUI(displayProgress);
             
@@ -300,24 +191,51 @@ public class ScnLoading : MonoBehaviour
         
         // 等待场景完全激活
         yield return new WaitUntil(() => asyncLoad.isDone);
-
-        // 画布退出动画（CanvasGroup淡出 + Image缩放）
-        yield return StartCoroutine(CanvasExit());
-
+        
+        // 播放结束动画
+        if (animator != null)
+        {
+            animator.Play("loading_end");
+        }
+        
+        // 等待结束时间
+        yield return new WaitForSeconds(endWaitTime);
+        
         isLoading = false;
     }
+    
+    /// <summary>
+    /// 计算显示进度
+    /// </summary>
+    float CalculateDisplayProgress(float elapsedTime, float realProgress, bool realLoadComplete)
+    {
+        if (!realLoadComplete)
+        {
+            return realProgress; // 显示真实进度
+        }
+        else
+        {
+            if (elapsedTime < minimumLoadTime)
+            {
+                return 0.99f; // 卡在99%等待时间
+            }
+            else
+            {
+                return 1f; // 显示100%完成
+            }
+        }
+    }
+    
     /// <summary>
     /// 更新加载界面UI
     /// </summary>
     void UpdateLoadingUI(float progress)
     {
-        if (progressImage != null)
+        if (progressSlider != null)
         {
-            Vector3 scale = progressImage.transform.localScale;
-            scale.x = progress;
-            progressImage.transform.localScale = scale;
+            progressSlider.value = progress;
         }
-
+        
         if (progressText != null)
         {
             int percentage = Mathf.RoundToInt(progress * 100);
@@ -331,22 +249,28 @@ public class ScnLoading : MonoBehaviour
     IEnumerator ShowLoadingAnimation(string tipMessage)
     {
         isLoading = true;
-
-        // 重置进度条为0%（在动画开始前）
-        UpdateLoadingUI(0f);
-
+        
         // 设置提示信息
         if (tipText != null)
         {
             tipText.text = string.IsNullOrEmpty(tipMessage) ? ScrTips.GetFormattedTips() : tipMessage;
         }
-
+        
+        // 重置进度条
+        UpdateLoadingUI(0f);
+        
         // 等待一帧确保界面完全激活
         yield return null;
-
-        // 画布进入动画（Image缩放 + CanvasGroup淡入）
-        yield return StartCoroutine(CanvasEnter());
-
+        
+        // 播放开始动画
+        if (animator != null)
+        {
+            animator.Play("loading_start");
+        }
+        
+        // 等待开始动画播放
+        yield return new WaitForSeconds(0.5f);
+        
         // 模拟加载进度（循环显示）
         float progress = 0f;
         while (isLoading)
@@ -368,10 +292,16 @@ public class ScnLoading : MonoBehaviour
     {
         // 显示100%完成
         UpdateLoadingUI(1f);
-
-        // 画布退出动画（CanvasGroup淡出 + Image缩放）
-        yield return StartCoroutine(CanvasExit());
-
+        
+        // 播放结束动画
+        if (animator != null)
+        {
+            animator.Play("loading_end");
+        }
+        
+        // 等待结束时间
+        yield return new WaitForSeconds(endWaitTime);
+        
         isLoading = false;
     }
     
@@ -381,31 +311,59 @@ public class ScnLoading : MonoBehaviour
     IEnumerator LoadingWithOperationSequence(IEnumerator operation, string tipMessage)
     {
         isLoading = true;
-
-        // 重置进度条为0%（在动画开始前）
-        UpdateLoadingUI(0f);
-
+        
         // 设置提示信息
         if (tipText != null)
         {
             tipText.text = string.IsNullOrEmpty(tipMessage) ? ScrTips.GetFormattedTips() : tipMessage;
         }
-
+        
         // 等待一帧确保界面完全激活
         yield return null;
-
-        // 画布进入动画（Image缩放 + CanvasGroup淡入）
-        yield return StartCoroutine(CanvasEnter());
-
+        
+        // 播放开始动画
+        if (animator != null)
+        {
+            animator.Play("loading_start");
+        }
+        
+        // 等待开始动画播放
+        yield return new WaitForSeconds(0.5f);
+        
+        // 重置进度条
+        UpdateLoadingUI(0f);
+        
         // 执行传入的操作
         yield return StartCoroutine(operation);
-
+        
         // 显示100%完成
         UpdateLoadingUI(1f);
-
-        // 画布退出动画（CanvasGroup淡出 + Image缩放）
-        yield return StartCoroutine(CanvasExit());
-
+        
+        // 播放结束动画
+        if (animator != null)
+        {
+            animator.Play("loading_end");
+        }
+        
+        // 等待结束时间
+        yield return new WaitForSeconds(endWaitTime);
+        
         isLoading = false;
+    }
+    
+    /// <summary>
+    /// 播放开始音效（动画事件调用）
+    /// </summary>
+    public void PlayStartSound()
+    {
+        // RuntimeManager.PlayOneShot("event:/Loading_start");
+    }
+
+    /// <summary>
+    /// 播放结束音效（动画事件调用）
+    /// </summary>
+    public void PlayEndSound()
+    {
+        // RuntimeManager.PlayOneShot("event:/Loading_end");
     }
 }

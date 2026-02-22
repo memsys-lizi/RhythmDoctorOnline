@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using RDOnline.Utils;
 
 [System.Serializable]
 public class TipsData
@@ -22,7 +21,7 @@ public static class ScrTips
     {
         if (isLoaded) return;
 
-        TextAsset tipsJson = AssetBundleManager.instance.LoadAsset<TextAsset>("tips");
+        TextAsset tipsJson = Resources.Load<TextAsset>("tips");
         if (tipsJson != null)
         {
             TipsData tipsData = JsonConvert.DeserializeObject<TipsData>(tipsJson.text);
