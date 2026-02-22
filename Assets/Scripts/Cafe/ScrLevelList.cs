@@ -142,11 +142,11 @@ public class ScrLevelList : MonoBehaviour
         
         if (response != null)
         {
-            totalFound = response.Found;
+            totalFound = response.found;
             
-            if (response.Hits != null && response.Hits.Count > 0)
+            if (response.hits != null && response.hits.Count > 0)
             {
-                populateCoroutine = StartCoroutine(PopulateCardsAsync(response.Hits, append));
+                populateCoroutine = StartCoroutine(PopulateCardsAsync(response.hits, append));
                 yield return populateCoroutine;
                 hasMoreData = cardInstances.Count < totalFound;
             }
@@ -170,14 +170,14 @@ public class ScrLevelList : MonoBehaviour
         int count = 0;
         foreach (var hit in hits)
         {
-            if (hit.Document == null) continue;
+            if (hit.document == null) continue;
 
             var cardObj = GetCardFromPool();
             var card = cardObj.GetComponent<ScrLevelCard>();
             
             if (card != null)
             {
-                card.SetData(hit.Document);
+                card.SetData(hit.document);
             }
 
             cardInstances.Add(cardObj);

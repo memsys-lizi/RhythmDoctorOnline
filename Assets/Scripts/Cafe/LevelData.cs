@@ -3,30 +3,22 @@ using Newtonsoft.Json;
 
 namespace RhythmCafe.Level
 {
-    [System.Serializable]
     public class LevelSearchResponse
     {
-        [JsonProperty("found")]
-        public int Found { get; set; }
-
-        [JsonProperty("hits")]
-        public List<LevelHit> Hits { get; set; }
-
-        [JsonProperty("page")]
-        public int Page { get; set; }
-
-        [JsonProperty("out_of")]
-        public int OutOf { get; set; }
+        public int found;
+        
+        public List<LevelHit> hits;
+        
+        public int page;
+        
+        public int out_of;
     }
 
-    [System.Serializable]
     public class LevelHit
     {
-        [JsonProperty("document")]
-        public LevelDocument Document { get; set; }
+        public LevelDocument document;
     }
-
-    [System.Serializable]
+    
     public class LevelDocument
     {
         public string id;
