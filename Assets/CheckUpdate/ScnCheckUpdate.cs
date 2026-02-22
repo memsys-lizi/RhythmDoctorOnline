@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,6 +12,8 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using Newtonsoft.Json;
+using Debug = UnityEngine.Debug;
 
 /// <summary>
 /// 检查更新脚本
@@ -46,8 +49,8 @@ public class ScnCheckUpdate : MonoBehaviour
     /// 可写入的 AssetBundles 根目录（部分平台 StreamingAssets 只读，使用 persistentDataPath）
     /// </summary>
     private string BundlesRootPath => Path.Combine(Application.persistentDataPath, LocalBundlesPath);
-    private string StreamingAssetsPath => BepInModEntry.modPath;
-    private string LocalInfoFullPath => Path.Combine(BundlesRootPath, "info.json");
+    private string StreamingAssetsPath => Path.Combine(BepInModEntry.modPath,"CacheAssets");
+    private string LocalInfoFullPath => Path.Combine(StreamingAssetsPath, "info.json");
 
     AssetBundle scenesBundle;
     AssetBundle resourcesBundle;
@@ -97,9 +100,10 @@ public class ScnCheckUpdate : MonoBehaviour
     /// </summary>
     public virtual void LoadAssetBundles()
     {
+        Debug.Log("try load" + new StackTrace());
         LoadAssemblyAndMetadata();
-        scenesBundle = AssetBundle.LoadFromFile(Path.Combine(BepInModEntry.modPath,"rdol.scenes.assets"));
-        resourcesBundle = AssetBundle.LoadFromFile(Path.Combine(BepInModEntry.modPath,"rdol.resources.assets"));
+        scenesBundle = AssetBundle.LoadFromFile(Path.Combine(BepInModEntry.modPath,"CacheAssets","rdol.scenes.assets"));
+        resourcesBundle = AssetBundle.LoadFromFile(Path.Combine(BepInModEntry.modPath,"CacheAssets","rdol.resources.assets"));
         
         Debug.Log("assetbundle loaded");
     }
@@ -108,7 +112,7 @@ public class ScnCheckUpdate : MonoBehaviour
     {
         try
         {
-            assembly = Assembly.LoadFrom(Path.Combine(BepInModEntry.modPath,"RDOL.dll"));
+            assembly = Assembly.LoadFrom(Path.Combine(BepInModEntry.modPath,"CacheAssets","RDOL.dll"));
         }
         catch (Exception e)
         {
@@ -150,7 +154,7 @@ public class ScnCheckUpdate : MonoBehaviour
             UpdateInfo updateInfo;
             try
             {
-                updateInfo = JsonUtility.FromJson<UpdateInfo>(json);
+                updateInfo = JsonConvert.DeserializeObject<UpdateInfo>(json);
             }
             catch (Exception e)
             {
@@ -347,8 +351,7 @@ public class ScnCheckUpdate : MonoBehaviour
                     float elapsed = Time.realtimeSinceStartup - lastTime;
                     float speed = elapsed > 0 ? (downloadedTotal - lastDownloaded) / elapsed : 0;
                     lastTime = Time.realtimeSinceStartup;
-                    lastDownloaded = downloadedTotal;
-
+                    lastDownloaded = downloadedTotal; 
                     SetStep($"下载文件 ({i + 1}/{files.Count})\n{FormatSize(downloadedTotal)}/{FormatSize(totalSize)} {FormatSpeed(speed)}");
                     yield return null;
                 }
