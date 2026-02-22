@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using HarmonyLib;
 using Newtonsoft.Json;
 using RDOnline.Utils;
@@ -16,6 +17,9 @@ namespace RDOnline
     public class Patches
     {
         public static RankScore RankScore = new();
+        [DllImport("user32.dll")]
+        static extern void keybd_event(int bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+        
         [HarmonyPatch(typeof(scnGame), "EndLevel")]
         public static class scnGame_EndLevel_Patch
         {
@@ -42,7 +46,12 @@ namespace RDOnline
                         mistakesP2 = __instance.mistakesManager.mistakesP2
                     };
                     RankScore = rankScore;
-                    Screen.fullScreen = true;
+                    //按住Alt+Enter后松开
+                    if (!Screen.fullScreen)
+                    {
+                        Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                        Screen.fullScreen = true;
+                    }
                     Cursor.visible = true;
                 }
                 catch (Exception ex)
