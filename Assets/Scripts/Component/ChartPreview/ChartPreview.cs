@@ -12,6 +12,7 @@ using RDOnline;
 using RDOnline.Audio;
 using RhythmCafe.Level;
 using RDOnline.ScnLobby;
+using StandaloneFileBrowser;
 
 namespace RDOnline.Component
 {
@@ -35,6 +36,8 @@ namespace RDOnline.Component
         public Image ProgressBar;
         [Tooltip("开始上传按钮")]
         public Button UploadButton;
+        [Tooltip("文件浏览按钮（选择 .rdlevel 后预览并可上传）")]
+        public Button FileBrowseButton;
 
         [Header("设置")]
         [Tooltip("封面旋转速度（度/秒）")]
@@ -50,6 +53,7 @@ namespace RDOnline.Component
         private bool _isUploading;
         private LevelDocument _lastDisplayedLevel;
         private Coroutine _loadCoverUrlCoroutine;
+        private bool _previewFromLocalFile;
 
         /// <summary>
         /// IChartPreview 接口实现 - 是否正在播放
@@ -68,6 +72,8 @@ namespace RDOnline.Component
                 PlayButton.onClick.AddListener(TogglePlayPause);
             if (UploadButton != null)
                 UploadButton.onClick.AddListener(StartUpload);
+            if (FileBrowseButton != null)
+                FileBrowseButton.onClick.AddListener(OnFileBrowseClick);
 
             // 初始化进度条
             if (ProgressBar != null)
@@ -84,7 +90,8 @@ namespace RDOnline.Component
 
         private void Update()
         {
-            // 同步关卡浏览器选中：选中社区关卡时刷新预览
+            if (_previewFromLocalFile)
+                return;
             if (SelectedLevel.Current == null)
             {
                 if (_lastDisplayedLevel != null)
@@ -107,6 +114,7 @@ namespace RDOnline.Component
         /// </summary>
         private void SetLevelFromCommunity(LevelDocument doc)
         {
+            _previewFromLocalFile = false;
             _lastDisplayedLevel = doc;
             UploadedChartUrl = !string.IsNullOrEmpty(doc.url2) ? doc.url2 : doc.url;
 
@@ -133,20 +141,44 @@ namespace RDOnline.Component
             }
 
             if (UploadButton != null)
-                UploadButton.gameObject.SetActive(false);
+            {
+                UploadButton.gameObject.SetActive(true);
+                UploadButton.interactable = false;
+            }
             if (ProgressBar != null)
                 ProgressBar.transform.localScale = new Vector3(0f, ProgressBar.transform.localScale.y, ProgressBar.transform.localScale.z);
         }
 
         private void ClearCommunityLevel()
         {
+            _previewFromLocalFile = false;
             _lastDisplayedLevel = null;
             UploadedChartUrl = null;
             if (SongNameText != null) SongNameText.text = "";
             if (AuthorText != null) AuthorText.text = "";
             if (CoverImage != null) CoverImage.texture = null;
             if (UploadButton != null)
+            {
                 UploadButton.gameObject.SetActive(true);
+                UploadButton.interactable = false;
+            }
+        }
+
+        /// <summary>
+        /// 文件浏览按钮：用 SFB 选择 .rdlevel，选中后预览该谱面并允许上传
+        /// </summary>
+        private void OnFileBrowseClick()
+        {
+#if UNITY_STANDALONE || UNITY_EDITOR
+            string[] paths = StandaloneFileBrowser.OpenFilePanel("选择谱面文件", "", "rdlevel", false);
+            if (paths != null && paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            {
+                LoadChart(paths[0]);
+                _lastDisplayedLevel = null;
+            }
+#else
+            ScrAlert.Show("当前平台不支持文件选择", true);
+#endif
         }
 
         private IEnumerator LoadCoverImageFromUrl(string url)
@@ -172,16 +204,18 @@ namespace RDOnline.Component
                 return;
             }
 
+            _previewFromLocalFile = true;
             _currentChartPath = chartPath;
             _currentChartFolder = Path.GetDirectoryName(chartPath);
 
-            // 读取并解析谱面文件
             string content = File.ReadAllText(chartPath);
             ParseChartData(content);
 
-            // 启用上传按钮
             if (UploadButton != null)
+            {
+                UploadButton.gameObject.SetActive(true);
                 UploadButton.interactable = true;
+            }
 
             ScrAlert.Show("谱面加载成功", true);
         }
@@ -191,33 +225,30 @@ namespace RDOnline.Component
         /// </summary>
         private void ParseChartData(string content)
         {
-            // 使用正则表达式提取字段
             string songName = ExtractField(content, "song");
             string author = ExtractField(content, "author");
             string previewImage = ExtractField(content, "previewImage");
-            string songFilename = ExtractField(content, "songFilename");
+            string audioFile = ExtractField(content, "previewSong");
+            if (string.IsNullOrEmpty(audioFile))
+                audioFile = ExtractField(content, "songFilename");
 
-            // 去除HTML标签
             songName = RemoveHtmlTags(songName);
             author = RemoveHtmlTags(author);
 
-            // 更新UI
             if (SongNameText != null)
                 SongNameText.text = songName;
             if (AuthorText != null)
                 AuthorText.text = author;
 
-            // 加载封面图片
             if (!string.IsNullOrEmpty(previewImage))
             {
                 string imagePath = Path.Combine(_currentChartFolder, previewImage);
                 StartCoroutine(LoadCoverImage(imagePath));
             }
 
-            // 加载音乐文件
-            if (!string.IsNullOrEmpty(songFilename))
+            if (!string.IsNullOrEmpty(audioFile))
             {
-                string audioPath = Path.Combine(_currentChartFolder, songFilename);
+                string audioPath = Path.Combine(_currentChartFolder, audioFile);
                 StartCoroutine(LoadAudio(audioPath));
             }
         }
