@@ -41,6 +41,16 @@ Shader "TextMeshPro/RainbowGradient"
         _ClipRect ("Clip Rect", Vector) = (-32767,-32767,32767,32767)
         _MaskSoftnessX ("Mask SoftnessX", Float) = 0
         _MaskSoftnessY ("Mask SoftnessY", Float) = 0
+
+        // ── Stencil 参数 ────────────────────────────────
+        _StencilComp ("Stencil Comparison", Float) = 8
+        _Stencil ("Stencil ID", Float) = 0
+        _StencilOp ("Stencil Operation", Float) = 0
+        _StencilWriteMask ("Stencil Write Mask", Float) = 255
+        _StencilReadMask ("Stencil Read Mask", Float) = 255
+
+        _CullMode ("Cull Mode", Float) = 0
+        _ColorMask ("Color Mask", Float) = 15
     }
 
     SubShader
@@ -53,12 +63,21 @@ Shader "TextMeshPro/RainbowGradient"
             "PreviewType" = "Plane"
         }
 
+        Stencil
+        {
+            Ref [_Stencil]
+            Comp [_StencilComp]
+            Pass [_StencilOp]
+            ReadMask [_StencilReadMask]
+            WriteMask [_StencilWriteMask]
+        }
+
         Lighting Off
-        Cull Off
+        Cull [_CullMode]
         ZTest [unity_GUIZTestMode]
         ZWrite Off
         Blend One OneMinusSrcAlpha
-        ColorMask RGBA
+        ColorMask [_ColorMask]
 
         Pass
         {
