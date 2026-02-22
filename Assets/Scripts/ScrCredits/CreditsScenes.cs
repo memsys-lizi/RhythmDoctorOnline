@@ -161,7 +161,7 @@ namespace Credits
             var gens = new List<Generator>
             {
                 GenAt(64, (g, b) => c.SetString(0, new Vector2Int(1, 1), "animation | Unity / C#", CanvasColor.BrightCyan)),
-                GenAt(80, (g, b) => c.SetString(0, new Vector2Int(1, 2), "game      | ADOFAIOnline", CanvasColor.BrightCyan)),
+                GenAt(80, (g, b) => c.SetString(0, new Vector2Int(1, 2), "game      | RD Online", CanvasColor.BrightCyan)),
                 GenAt(96, (g, b) => c.SetString(0, new Vector2Int(1, 3), "dev       | memsyslizi", CanvasColor.BrightCyan)),
                 GenAt(112, (g, b) => c.SetString(0, new Vector2Int(1, 4), "assist    | StArray", CanvasColor.BrightCyan)),
                 GenAt(120, (g, b) => c.SetString(0, new Vector2Int(1, 5), "open test | 20260201", CanvasColor.Cyan)),
