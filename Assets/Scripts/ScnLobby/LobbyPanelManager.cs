@@ -46,71 +46,61 @@ namespace RDOnline.ScnLobby
         }
 
         /// <summary>
-        /// 初始化面板状态
+        /// 初始化面板状态（仅用 CanvasGroup 控制显示隐藏）
         /// </summary>
         private void InitializePanels()
         {
-            // 主面板：默认显示
             if (MainPanel != null)
             {
                 MainPanel.alpha = 1f;
+                MainPanel.interactable = true;
                 MainPanel.blocksRaycasts = true;
-                MainPanel.gameObject.SetActive(true);
             }
 
-            // 创建房间面板：默认隐藏
             if (CreateRoomPanel != null)
             {
                 CreateRoomPanel.alpha = 0f;
+                CreateRoomPanel.interactable = false;
                 CreateRoomPanel.blocksRaycasts = false;
-                CreateRoomPanel.gameObject.SetActive(false);
             }
         }
 
         /// <summary>
-        /// 显示创建房间面板（淡入淡出切换）
+        /// 显示创建房间面板（淡入淡出切换，仅 CanvasGroup 隐藏）
         /// </summary>
         public void ShowCreateRoomPanel()
         {
             if (CreateRoomPanel == null || MainPanel == null) return;
 
-            // 隐藏主面板
             MainPanel.DOFade(0f, FadeDuration).OnComplete(() =>
             {
+                MainPanel.interactable = false;
                 MainPanel.blocksRaycasts = false;
-                MainPanel.gameObject.SetActive(false);
             });
 
-            // 显示创建房间面板
-            CreateRoomPanel.gameObject.SetActive(true);
             CreateRoomPanel.alpha = 0f;
-            CreateRoomPanel.DOFade(1f, FadeDuration).OnStart(() =>
-            {
-                CreateRoomPanel.blocksRaycasts = true;
-            });
+            CreateRoomPanel.interactable = true;
+            CreateRoomPanel.blocksRaycasts = true;
+            CreateRoomPanel.DOFade(1f, FadeDuration);
         }
 
         /// <summary>
-        /// 显示主面板（淡入淡出切换）
+        /// 显示主面板（淡入淡出切换，仅 CanvasGroup 隐藏）
         /// </summary>
         public void ShowMainPanel()
         {
             if (MainPanel == null || CreateRoomPanel == null) return;
 
-            // 隐藏创建房间面板
             CreateRoomPanel.DOFade(0f, FadeDuration).OnComplete(() =>
             {
+                CreateRoomPanel.interactable = false;
                 CreateRoomPanel.blocksRaycasts = false;
-                CreateRoomPanel.gameObject.SetActive(false);
             });
 
-            // 显示主面板
-            MainPanel.gameObject.SetActive(true);
             MainPanel.alpha = 0f;
-            MainPanel.DOFade(1f, FadeDuration).OnStart(() =>
-            {
-                MainPanel.blocksRaycasts = true;
-            });
+            MainPanel.interactable = true;
+            MainPanel.blocksRaycasts = true;
+            MainPanel.DOFade(1f, FadeDuration);
         }
     }
 }

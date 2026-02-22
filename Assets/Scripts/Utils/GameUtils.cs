@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using UnityEngine;
 
 namespace RDOnline.Utils
@@ -124,11 +124,7 @@ namespace RDOnline.Utils
         public string score => ToString();
         public override string ToString()
         {
-            return $"总计: 提前{earlyOffsetsSum}帧, 滞后{lateOffsetsSum}帧, 总共{totalOffsetsSum}帧\n" +
-                   /*$"玩家1 : 提前{earlyOffsetsSumP1}帧, 滞后{lateOffsetsSumP1}帧, 总共{totalOffsetsSumP1}帧\n" +
-                   $"玩家2 : 提前{earlyOffsetsSumP2}帧, 滞后{lateOffsetsSumP2}帧, 总共{totalOffsetsSumP2}帧\n" +*/
-                   $"判定: {mistakes}\n" +
-                   $"评分: {rank}";
+            return $"总计: 提前{earlyOffsetsSum}帧, 滞后{lateOffsetsSum}帧, 总共{totalOffsetsSum}帧 判定: {mistakes} 评分: {rank}";
         }
     }
 #endif

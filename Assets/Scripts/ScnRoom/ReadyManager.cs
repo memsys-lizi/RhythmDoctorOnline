@@ -255,8 +255,7 @@ namespace RDOnline.ScnRoom
             }
             Debug.Log("Enter level：" + levelPath);
 
-            // 跳转到游戏场景
-            ScnLoading.LoadScenes("scnGame");
+            GameUtils.LoadLevel(levelPath);
         }
 
         /// <summary>

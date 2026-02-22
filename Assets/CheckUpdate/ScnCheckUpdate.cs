@@ -21,7 +21,7 @@ public class ScnCheckUpdate : MonoBehaviour
     [Tooltip("true=开发环境，false=生产环境")]
     public bool IsDev = true;
     public string DevServerURL = "http://localhost:4004";
-    public string ProdServerURL = "https://adofaionlineapi.adofaitools.top";
+    public string ProdServerURL = "https://rdonlineapi.rhythmdoctor.top";
     /// <summary>当前使用的服务器 URL（由 IsDev 决定）</summary>
     private string ServerURL => IsDev ? DevServerURL : ProdServerURL;
 
