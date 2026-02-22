@@ -1,11 +1,10 @@
 using UnityEngine;
 using RDOnline.Network;
-using RDOnline.Lobby;
 
 namespace RDOnline.Auth
 {
     /// <summary>
-    /// 场景导航器 - 玩家进入本物体触发区（Collider2D isTrigger）时切换场景。
+    /// 场景导航器 - 供按钮等调用 DoNavigate() 切换场景（如返回菜单）。
     /// </summary>
     public class SceneNavigator : MonoBehaviour
     {
@@ -15,22 +14,8 @@ namespace RDOnline.Auth
         [Tooltip("切换场景前是否断开服务器连接")]
         public bool DisconnectBeforeNavigate = true;
 
-        private void Start()
-        {
-            var c = GetComponent<Collider2D>();
-            if (c != null && !c.isTrigger)
-                Debug.LogWarning("[SceneNavigator] 请将本物体上的 Collider2D 勾选 Is Trigger。");
-        }
-
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.GetComponentInParent<LobbyPlayerController>() == null)
-                return;
-            DoNavigate();
-        }
-
         /// <summary>
-        /// 执行离开：断开连接（可选）并加载目标场景
+        /// 执行导航：断开连接（可选）并加载目标场景。可由按钮 OnClick 调用。
         /// </summary>
         public void DoNavigate()
         {

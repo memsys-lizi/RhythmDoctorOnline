@@ -27,15 +27,9 @@ namespace RDOnline.Lobby
             WebSocketManager.Instance.Send("lobby/join", new { }, (res) =>
             {
                 if (res.Success)
-                {
                     Debug.Log($"[LobbyJoiner] {res.Message}");
-                    if (PlayerManager.Instance != null && res.Data != null)
-                        PlayerManager.Instance.InitWithPlayers(res.Data);
-                }
                 else
-                {
                     Debug.LogError($"[LobbyJoiner] 加入大厅失败: {res.Message}");
-                }
             });
         }
     }
