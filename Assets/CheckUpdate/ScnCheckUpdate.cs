@@ -89,7 +89,7 @@ public class ScnCheckUpdate : MonoBehaviour
 
     private void OnEnterGameClick()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("scnVerify");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("StartUp");
     }
 
     /// <summary>
