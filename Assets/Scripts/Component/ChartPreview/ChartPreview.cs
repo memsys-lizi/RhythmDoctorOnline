@@ -12,7 +12,7 @@ using RDOnline;
 using RDOnline.Audio;
 using RhythmCafe.Level;
 using RDOnline.ScnLobby;
-using StandaloneFileBrowser;
+using SFB;
 
 namespace RDOnline.Component
 {
@@ -169,16 +169,13 @@ namespace RDOnline.Component
         /// </summary>
         private void OnFileBrowseClick()
         {
-#if UNITY_STANDALONE || UNITY_EDITOR
             string[] paths = StandaloneFileBrowser.OpenFilePanel("选择谱面文件", "", "rdlevel", false);
-            if (paths != null && paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
             {
                 LoadChart(paths[0]);
                 _lastDisplayedLevel = null;
             }
-#else
-            ScrAlert.Show("当前平台不支持文件选择", true);
-#endif
+            //ScrAlert.Show("当前平台不支持文件选择", true);
         }
 
         private IEnumerator LoadCoverImageFromUrl(string url)

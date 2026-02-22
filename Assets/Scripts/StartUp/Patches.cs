@@ -14,7 +14,7 @@ namespace RDOnline
 #if RHYTHMDOCTOR
     public class Patches
     {
-        public static RankScore RankScore;
+        public static RankScore RankScore = new();
         [HarmonyPatch(typeof(scnGame), "EndLevel")]
         public static class scnGame_EndLevel_Patch
         {

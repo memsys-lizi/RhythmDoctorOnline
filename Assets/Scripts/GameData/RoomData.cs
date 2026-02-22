@@ -68,6 +68,8 @@ namespace RDOnline
                 Destroy(gameObject);
                 return;
             }
+
+            CurrentScore = GameUtils.GetCurrentScore();
             Instance = this;
         }
 
