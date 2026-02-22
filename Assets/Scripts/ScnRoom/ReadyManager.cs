@@ -90,15 +90,15 @@ namespace RDOnline.ScnRoom
 
             WebSocketManager.Instance.Send("room/ready", data, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log($"[ReadyManager] 准备状态更新成功: {ready}");
                     UpdateButtonState();
                 }
                 else
                 {
-                    Debug.LogError($"[ReadyManager] 准备失败: {res.Message}");
-                    ScrAlert.Show($"准备失败: {res.Message}", true);
+                    Debug.LogError($"[ReadyManager] 准备失败: {res.message}");
+                    ScrAlert.Show($"准备失败: {res.message}", true);
                     // 恢复状态
                     _isReady = !_isReady;
                     UpdateButtonState();
@@ -162,11 +162,11 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnCountdown(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
-                int seconds = (msg.Data["seconds"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 5;
+                int seconds = (msg.data["seconds"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 5;
                 Debug.Log($"[ReadyManager] 收到倒计时事件: {seconds}秒");
 
                 _isCountingDown = true;
@@ -291,14 +291,14 @@ namespace RDOnline.ScnRoom
 
             WebSocketManager.Instance.Send("room/finish", new { score = score }, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[ReadyManager] 游戏完成请求发送成功");
                 }
                 else
                 {
-                    Debug.LogError($"[ReadyManager] 游戏完成请求失败: {res.Message}");
-                    ScrAlert.Show($"发送完成失败: {res.Message}", true);
+                    Debug.LogError($"[ReadyManager] 游戏完成请求失败: {res.message}");
+                    ScrAlert.Show($"发送完成失败: {res.message}", true);
                 }
             });
         }
@@ -332,11 +332,11 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnPlayerFinish(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
-                int userId = (msg.Data["userId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
+                int userId = (msg.data["userId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
                 Debug.Log($"[ReadyManager] 玩家 {userId} 已完成游戏");
 
                 // 可以在这里显示其他玩家完成的提示（可选）
@@ -356,11 +356,11 @@ namespace RDOnline.ScnRoom
             Debug.Log("[ReadyManager] 收到游戏结束事件");
 
             // 解析分数数据
-            if (msg.Data != null && msg.Data.ContainsKey("scores"))
+            if (msg.data != null && msg.data.ContainsKey("scores"))
             {
                 try
                 {
-                    var scoresArray = msg.Data["scores"] as Newtonsoft.Json.Linq.JArray;
+                    var scoresArray = msg.data["scores"] as Newtonsoft.Json.Linq.JArray;
                     if (scoresArray != null)
                     {
                         var scoreList = new System.Collections.Generic.List<ScoreData>();

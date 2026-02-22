@@ -60,7 +60,7 @@ namespace RDOnline.ScnRoom
             {
                 _isLeaving = false;
 
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[RoomLeaver] 离开房间成功");
 
@@ -77,8 +77,8 @@ namespace RDOnline.ScnRoom
                 }
                 else
                 {
-                    Debug.LogError($"[RoomLeaver] 离开房间失败: {res.Message}");
-                    ScrAlert.Show($"离开房间失败: {res.Message}", true);
+                    Debug.LogError($"[RoomLeaver] 离开房间失败: {res.message}");
+                    ScrAlert.Show($"离开房间失败: {res.message}", true);
                 }
             });
         }

@@ -138,7 +138,7 @@ namespace RDOnline.Network
                 return;
             }
 
-            var msg = new RequestMessage { Type = type, Data = data };
+            var msg = new RequestMessage { type = type, data = data };
             var json = JsonConvert.SerializeObject(msg);
             _ws.SendText(json);
         }
@@ -151,14 +151,14 @@ namespace RDOnline.Network
             if (!IsConnected)
             {
                 Debug.LogWarning("[WS] 未连接，无法发送");
-                callback?.Invoke(new ResponseMessage { Success = false, Message = "未连接" });
+                callback?.Invoke(new ResponseMessage { success = false, message = "未连接" });
                 return;
             }
 
             var requestId = Guid.NewGuid().ToString("N")[..8];
             _pendingRequests[requestId] = callback;
 
-            var msg = new RequestMessage { Type = type, Data = data, RequestId = requestId };
+            var msg = new RequestMessage { type = type, data = data, requestId = requestId };
             var json = JsonConvert.SerializeObject(msg);
             _ws.SendText(json);
         }
@@ -179,15 +179,15 @@ namespace RDOnline.Network
             }
 
             // 优先处理带requestId的响应
-            if (!string.IsNullOrEmpty(msg.RequestId) && _pendingRequests.TryGetValue(msg.RequestId, out var callback))
+            if (!string.IsNullOrEmpty(msg.requestId) && _pendingRequests.TryGetValue(msg.requestId, out var callback))
             {
-                _pendingRequests.Remove(msg.RequestId);
+                _pendingRequests.Remove(msg.requestId);
                 callback?.Invoke(msg);
                 return;
             }
 
             // 触发注册的处理器
-            if (_handlers.TryGetValue(msg.Type, out var handler))
+            if (_handlers.TryGetValue(msg.type, out var handler))
             {
                 handler?.Invoke(msg);
             }

@@ -174,7 +174,7 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnRoomUpdated(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
@@ -184,9 +184,9 @@ namespace RDOnline.ScnRoom
                 string changeMessage = "房主更新了房间信息：";
 
                 // 检查房间名称变化
-                if (msg.Data.ContainsKey("name"))
+                if (msg.data.ContainsKey("name"))
                 {
-                    string newName = msg.Data["name"]?.ToString();
+                    string newName = msg.data["name"]?.ToString();
                     if (RoomData.Instance != null && RoomData.Instance.RoomName != newName)
                     {
                         RoomData.Instance.RoomName = newName;
@@ -200,9 +200,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 检查最大人数变化
-                if (msg.Data.ContainsKey("maxPlayers"))
+                if (msg.data.ContainsKey("maxPlayers"))
                 {
-                    int newMaxPlayers = (msg.Data["maxPlayers"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
+                    int newMaxPlayers = (msg.data["maxPlayers"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
                     if (RoomData.Instance != null && RoomData.Instance.MaxPlayers != newMaxPlayers)
                     {
                         RoomData.Instance.MaxPlayers = newMaxPlayers;
@@ -213,9 +213,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 检查密码状态变化
-                if (msg.Data.ContainsKey("hasPassword"))
+                if (msg.data.ContainsKey("hasPassword"))
                 {
-                    bool newHasPassword = (msg.Data["hasPassword"] as Newtonsoft.Json.Linq.JToken)?.ToObject<bool>() ?? false;
+                    bool newHasPassword = (msg.data["hasPassword"] as Newtonsoft.Json.Linq.JToken)?.ToObject<bool>() ?? false;
                     if (RoomData.Instance != null && RoomData.Instance.HasPassword != newHasPassword)
                     {
                         RoomData.Instance.HasPassword = newHasPassword;
@@ -226,9 +226,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 检查谱面名称变化（必须在检查URL之前更新）
-                if (msg.Data.ContainsKey("chartName"))
+                if (msg.data.ContainsKey("chartName"))
                 {
-                    string newChartName = msg.Data["chartName"]?.ToString();
+                    string newChartName = msg.data["chartName"]?.ToString();
                     if (RoomData.Instance != null)
                     {
                         RoomData.Instance.ChartName = newChartName;
@@ -237,9 +237,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 检查谱面URL变化（重要！需要重新下载）
-                if (msg.Data.ContainsKey("chartUrl"))
+                if (msg.data.ContainsKey("chartUrl"))
                 {
-                    string newChartUrl = msg.Data["chartUrl"]?.ToString();
+                    string newChartUrl = msg.data["chartUrl"]?.ToString();
 
                     if (RoomData.Instance != null)
                     {
@@ -264,9 +264,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 检查房间状态变化
-                if (msg.Data.ContainsKey("status"))
+                if (msg.data.ContainsKey("status"))
                 {
-                    string newStatus = msg.Data["status"]?.ToString();
+                    string newStatus = msg.data["status"]?.ToString();
                     if (RoomData.Instance != null && RoomData.Instance.Status != newStatus)
                     {
                         RoomData.Instance.Status = newStatus;
@@ -275,9 +275,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 检查人数变化
-                if (msg.Data.ContainsKey("playerCount"))
+                if (msg.data.ContainsKey("playerCount"))
                 {
-                    int newPlayerCount = (msg.Data["playerCount"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
+                    int newPlayerCount = (msg.data["playerCount"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
                     if (RoomData.Instance != null && RoomData.Instance.PlayerCount != newPlayerCount)
                     {
                         RoomData.Instance.PlayerCount = newPlayerCount;
@@ -286,9 +286,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 检查房主变更
-                if (msg.Data.ContainsKey("ownerId"))
+                if (msg.data.ContainsKey("ownerId"))
                 {
-                    int newOwnerId = (msg.Data["ownerId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
+                    int newOwnerId = (msg.data["ownerId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
                     if (RoomData.Instance != null)
                     {
                         bool ownerChanged = RoomData.Instance.OwnerId != newOwnerId;
@@ -305,7 +305,7 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 如果有变化（除了谱面URL，因为谱面URL已经单独提示了），显示提示
-                if (hasChanges && !msg.Data.ContainsKey("chartUrl"))
+                if (hasChanges && !msg.data.ContainsKey("chartUrl"))
                 {
                     ScrAlert.Show(changeMessage, true);
                 }

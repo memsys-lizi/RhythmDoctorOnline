@@ -77,7 +77,7 @@ namespace RDOnline.ScnLobby
 
             WebSocketManager.Instance.Send("room/list", null, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log($"[RoomListUI] 房间列表加载成功");
 
@@ -85,9 +85,9 @@ namespace RDOnline.ScnLobby
                     ClearRoomList();
 
                     // 解析房间列表
-                    if (res.Data != null && res.Data.ContainsKey("rooms"))
+                    if (res.data != null && res.data.ContainsKey("rooms"))
                     {
-                        var rooms = res.Data["rooms"] as Newtonsoft.Json.Linq.JArray;
+                        var rooms = res.data["rooms"] as Newtonsoft.Json.Linq.JArray;
                         if (rooms != null)
                         {
                             foreach (var room in rooms)
@@ -111,8 +111,8 @@ namespace RDOnline.ScnLobby
                 }
                 else
                 {
-                    Debug.LogError($"[RoomListUI] 加载房间列表失败: {res.Message}");
-                    ScrAlert.Show($"加载房间列表失败: {res.Message}", true);
+                    Debug.LogError($"[RoomListUI] 加载房间列表失败: {res.message}");
+                    ScrAlert.Show($"加载房间列表失败: {res.message}", true);
                 }
             });
         }
@@ -189,9 +189,9 @@ namespace RDOnline.ScnLobby
         {
             Debug.Log("[RoomListUI] 收到 room/created 事件");
 
-            if (msg.Data != null && msg.Data.ContainsKey("room"))
+            if (msg.data != null && msg.data.ContainsKey("room"))
             {
-                var room = msg.Data["room"] as Newtonsoft.Json.Linq.JObject;
+                var room = msg.data["room"] as Newtonsoft.Json.Linq.JObject;
                 if (room != null)
                 {
                     string roomId = room["id"]?.ToString();
@@ -216,21 +216,21 @@ namespace RDOnline.ScnLobby
         {
             Debug.Log("[RoomListUI] 收到 room/updated 事件");
 
-            if (msg.Data != null && msg.Data.ContainsKey("roomId"))
+            if (msg.data != null && msg.data.ContainsKey("roomId"))
             {
-                string roomId = msg.Data["roomId"]?.ToString();
+                string roomId = msg.data["roomId"]?.ToString();
 
                 if (_roomItems.TryGetValue(roomId, out RoomItem roomItem))
                 {
                     // 提取更新的字段
-                    string roomName = msg.Data.ContainsKey("name") ? msg.Data["name"]?.ToString() : null;
-                    int? playerCount = msg.Data.ContainsKey("playerCount") ? (msg.Data["playerCount"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() : null;
-                    int? maxPlayers = msg.Data.ContainsKey("maxPlayers") ? (msg.Data["maxPlayers"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() : null;
-                    bool? hasPassword = msg.Data.ContainsKey("hasPassword") ? (msg.Data["hasPassword"] as Newtonsoft.Json.Linq.JToken)?.ToObject<bool>() : null;
-                    string status = msg.Data.ContainsKey("status") ? msg.Data["status"]?.ToString() : null;
-                    string chartUrl = msg.Data.ContainsKey("chartUrl") ? msg.Data["chartUrl"]?.ToString() : null;
-                    string chartName = msg.Data.ContainsKey("chartName") ? msg.Data["chartName"]?.ToString() : null;
-                    int? ownerId = msg.Data.ContainsKey("ownerId") ? (msg.Data["ownerId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() : null;
+                    string roomName = msg.data.ContainsKey("name") ? msg.data["name"]?.ToString() : null;
+                    int? playerCount = msg.data.ContainsKey("playerCount") ? (msg.data["playerCount"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() : null;
+                    int? maxPlayers = msg.data.ContainsKey("maxPlayers") ? (msg.data["maxPlayers"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() : null;
+                    bool? hasPassword = msg.data.ContainsKey("hasPassword") ? (msg.data["hasPassword"] as Newtonsoft.Json.Linq.JToken)?.ToObject<bool>() : null;
+                    string status = msg.data.ContainsKey("status") ? msg.data["status"]?.ToString() : null;
+                    string chartUrl = msg.data.ContainsKey("chartUrl") ? msg.data["chartUrl"]?.ToString() : null;
+                    string chartName = msg.data.ContainsKey("chartName") ? msg.data["chartName"]?.ToString() : null;
+                    int? ownerId = msg.data.ContainsKey("ownerId") ? (msg.data["ownerId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() : null;
 
                     // 更新房间项
                     roomItem.UpdateRoomData(roomName, playerCount, maxPlayers, hasPassword, status, chartUrl, chartName, ownerId);
@@ -251,9 +251,9 @@ namespace RDOnline.ScnLobby
         {
             Debug.Log("[RoomListUI] 收到 room/destroyed 事件");
 
-            if (msg.Data != null && msg.Data.ContainsKey("roomId"))
+            if (msg.data != null && msg.data.ContainsKey("roomId"))
             {
-                string roomId = msg.Data["roomId"]?.ToString();
+                string roomId = msg.data["roomId"]?.ToString();
                 RemoveRoomItem(roomId);
             }
         }
@@ -266,9 +266,9 @@ namespace RDOnline.ScnLobby
         {
             Debug.Log("[RoomListUI] 收到 lobby/sync 定时广播");
 
-            if (msg.Data != null && msg.Data.ContainsKey("rooms"))
+            if (msg.data != null && msg.data.ContainsKey("rooms"))
             {
-                var rooms = msg.Data["rooms"] as Newtonsoft.Json.Linq.JArray;
+                var rooms = msg.data["rooms"] as Newtonsoft.Json.Linq.JArray;
                 if (rooms != null)
                 {
                     SyncRoomList(rooms);

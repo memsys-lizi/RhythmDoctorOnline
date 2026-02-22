@@ -102,14 +102,14 @@ namespace RDOnline.Auth
 
             WebSocketManager.Instance.Send("auth/sendCode", new { email, type = 1 }, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     ShowMessage("验证码已发送");
                     _cooldownTimer = CodeCooldown;
                 }
                 else
                 {
-                    ShowMessage(res.Message ?? "发送失败");
+                    ShowMessage(res.message ?? "发送失败");
                     BtnSendCode.interactable = true;
                 }
             });
@@ -162,14 +162,14 @@ namespace RDOnline.Auth
             {
                 BtnRegister.interactable = true;
 
-                if (res.Success)
+                if (res.success)
                 {
                     ShowMessage("注册成功");
                     OnBackToLoginClick();
                 }
                 else
                 {
-                    ShowMessage(res.Message ?? "注册失败");
+                    ShowMessage(res.message ?? "注册失败");
                 }
             });
         }

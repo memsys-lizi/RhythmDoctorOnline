@@ -85,13 +85,13 @@ namespace RDOnline.Component
         /// </summary>
         private void OnChatMessage(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
                 // 解析消息数据
-                string username = msg.Data["username"]?.ToString();
-                string message = msg.Data["message"]?.ToString();
+                string username = msg.data["username"]?.ToString();
+                string message = msg.data["message"]?.ToString();
 
                 if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(message))
                 {
@@ -238,7 +238,7 @@ namespace RDOnline.Component
             // 发送消息
             WebSocketManager.Instance.Send("chat/send", data, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[ChatManager] 消息发送成功");
                     // 清空输入框
@@ -246,8 +246,8 @@ namespace RDOnline.Component
                 }
                 else
                 {
-                    Debug.LogError($"[ChatManager] 消息发送失败: {res.Message}");
-                    ScrAlert.Show($"发送失败: {res.Message}", true);
+                    Debug.LogError($"[ChatManager] 消息发送失败: {res.message}");
+                    ScrAlert.Show($"发送失败: {res.message}", true);
                 }
             });
         }

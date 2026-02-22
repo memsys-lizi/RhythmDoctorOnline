@@ -26,10 +26,10 @@ namespace RDOnline.Lobby
 
             WebSocketManager.Instance.Send("lobby/join", new { }, (res) =>
             {
-                if (res.Success)
-                    Debug.Log($"[LobbyJoiner] {res.Message}");
+                if (res.success)
+                    Debug.Log($"[LobbyJoiner] {res.message}");
                 else
-                    Debug.LogError($"[LobbyJoiner] 加入大厅失败: {res.Message}");
+                    Debug.LogError($"[LobbyJoiner] 加入大厅失败: {res.message}");
             });
         }
     }

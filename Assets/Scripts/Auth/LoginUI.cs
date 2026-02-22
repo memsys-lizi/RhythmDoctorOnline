@@ -144,12 +144,12 @@ namespace RDOnline.Auth
             {
                 BtnLogin.interactable = true;
 
-                if (res.Success)
+                if (res.success)
                 {
                     SaveCredentials(username, password);
 
-                    var token = res.Data["token"]?.ToString();
-                    var user = res.Data["user"] as JObject;
+                    var token = res.data["token"]?.ToString();
+                    var user = res.data["user"] as JObject;
 
                     UserData.Instance.SetLoginData(
                         user["id"]?.ToObject<int>() ?? 0,
@@ -168,7 +168,7 @@ namespace RDOnline.Auth
                 }
                 else
                 {
-                    ShowMessage(res.Message ?? "登录失败");
+                    ShowMessage(res.message ?? "登录失败");
                 }
             });
         }

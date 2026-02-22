@@ -148,18 +148,18 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnPlayerJoin(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
                 // 根据API文档,玩家数据嵌套在 player 对象中
-                if (!msg.Data.ContainsKey("player"))
+                if (!msg.data.ContainsKey("player"))
                 {
                     Debug.LogError("[PlayerListUI] room/playerJoin 事件缺少 player 字段");
                     return;
                 }
 
-                var playerToken = msg.Data["player"] as Newtonsoft.Json.Linq.JToken;
+                var playerToken = msg.data["player"] as Newtonsoft.Json.Linq.JToken;
                 if (playerToken == null)
                 {
                     Debug.LogError("[PlayerListUI] player 字段解析失败");
@@ -205,12 +205,12 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnPlayerLeave(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
                 // 解析玩家ID
-                int userId = (msg.Data["userId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
+                int userId = (msg.data["userId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
 
                 Debug.Log($"[PlayerListUI] 玩家离开: {userId}");
 
@@ -234,13 +234,13 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnPlayerReady(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
                 // 解析玩家数据
-                int userId = (msg.Data["userId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
-                bool ready = (msg.Data["ready"] as Newtonsoft.Json.Linq.JToken)?.ToObject<bool>() ?? false;
+                int userId = (msg.data["userId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
+                bool ready = (msg.data["ready"] as Newtonsoft.Json.Linq.JToken)?.ToObject<bool>() ?? false;
 
                 Debug.Log($"[PlayerListUI] 玩家准备状态变化: {userId} - {ready}");
 
@@ -264,16 +264,16 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnRoomUpdated(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
                 Debug.Log("[PlayerListUI] 房间信息更新");
 
                 // 检查是否有房主变更
-                if (msg.Data.ContainsKey("ownerId"))
+                if (msg.data.ContainsKey("ownerId"))
                 {
-                    int newOwnerId = (msg.Data["ownerId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
+                    int newOwnerId = (msg.data["ownerId"] as Newtonsoft.Json.Linq.JToken)?.ToObject<int>() ?? 0;
 
                     if (RoomData.Instance != null && RoomData.Instance.OwnerId != newOwnerId)
                     {
@@ -288,17 +288,17 @@ namespace RDOnline.ScnRoom
                 // 更新其他房间信息到 RoomData
                 if (RoomData.Instance != null)
                 {
-                    if (msg.Data.ContainsKey("status"))
+                    if (msg.data.ContainsKey("status"))
                     {
-                        RoomData.Instance.Status = msg.Data["status"]?.ToString();
+                        RoomData.Instance.Status = msg.data["status"]?.ToString();
                     }
-                    if (msg.Data.ContainsKey("chartUrl"))
+                    if (msg.data.ContainsKey("chartUrl"))
                     {
-                        RoomData.Instance.ChartUrl = msg.Data["chartUrl"]?.ToString();
+                        RoomData.Instance.ChartUrl = msg.data["chartUrl"]?.ToString();
                     }
-                    if (msg.Data.ContainsKey("chartName"))
+                    if (msg.data.ContainsKey("chartName"))
                     {
-                        RoomData.Instance.ChartName = msg.Data["chartName"]?.ToString();
+                        RoomData.Instance.ChartName = msg.data["chartName"]?.ToString();
                     }
                 }
             }
@@ -356,16 +356,16 @@ namespace RDOnline.ScnRoom
         /// </summary>
         private void OnRoomSync(ResponseMessage msg)
         {
-            if (msg.Data == null) return;
+            if (msg.data == null) return;
 
             try
             {
                 Debug.Log("[PlayerListUI] 收到 room/sync 定时广播");
 
                 // 同步房间信息
-                if (msg.Data.ContainsKey("room"))
+                if (msg.data.ContainsKey("room"))
                 {
-                    var room = msg.Data["room"] as Newtonsoft.Json.Linq.JObject;
+                    var room = msg.data["room"] as Newtonsoft.Json.Linq.JObject;
                     if (room != null)
                     {
                         SyncRoomInfo(room);
@@ -373,9 +373,9 @@ namespace RDOnline.ScnRoom
                 }
 
                 // 同步玩家列表
-                if (msg.Data.ContainsKey("players"))
+                if (msg.data.ContainsKey("players"))
                 {
-                    var players = msg.Data["players"] as Newtonsoft.Json.Linq.JArray;
+                    var players = msg.data["players"] as Newtonsoft.Json.Linq.JArray;
                     if (players != null)
                     {
                         SyncPlayerList(players);

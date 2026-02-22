@@ -65,9 +65,9 @@ namespace RDOnline.ScnRoom
             // 发送加入房间请求
             WebSocketManager.Instance.Send("room/join", data, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
-                    Debug.Log($"[RoomJoiner] 加入房间成功: {res.Message}");
+                    Debug.Log($"[RoomJoiner] 加入房间成功: {res.message}");
                     ScrAlert.Show("成功加入房间", true);
 
                     // 加入成功后，主动获取房间完整信息
@@ -76,8 +76,8 @@ namespace RDOnline.ScnRoom
                 }
                 else
                 {
-                    Debug.LogError($"[RoomJoiner] 加入房间失败: {res.Message}");
-                    ScrAlert.Show($"加入房间失败: {res.Message}", true);
+                    Debug.LogError($"[RoomJoiner] 加入房间失败: {res.message}");
+                    ScrAlert.Show($"加入房间失败: {res.message}", true);
                     // TODO: 返回大厅场景
                 }
             });
@@ -97,16 +97,16 @@ namespace RDOnline.ScnRoom
 
             WebSocketManager.Instance.Send("room/info", data, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[RoomJoiner] 获取房间信息成功");
 
-                    if (res.Data != null)
+                    if (res.data != null)
                     {
                         // 更新房间信息
-                        if (res.Data.ContainsKey("room"))
+                        if (res.data.ContainsKey("room"))
                         {
-                            var room = res.Data["room"] as Newtonsoft.Json.Linq.JObject;
+                            var room = res.data["room"] as Newtonsoft.Json.Linq.JObject;
                             if (room != null)
                             {
                                 UpdateRoomData(room);
@@ -114,9 +114,9 @@ namespace RDOnline.ScnRoom
                         }
 
                         // 解析玩家列表
-                        if (res.Data.ContainsKey("players"))
+                        if (res.data.ContainsKey("players"))
                         {
-                            var players = res.Data["players"] as Newtonsoft.Json.Linq.JArray;
+                            var players = res.data["players"] as Newtonsoft.Json.Linq.JArray;
                             if (players != null)
                             {
                                 Debug.Log($"[RoomJoiner] 房间内有 {players.Count} 个玩家");
@@ -133,7 +133,7 @@ namespace RDOnline.ScnRoom
                 }
                 else
                 {
-                    Debug.LogError($"[RoomJoiner] 获取房间信息失败: {res.Message}");
+                    Debug.LogError($"[RoomJoiner] 获取房间信息失败: {res.message}");
                 }
             });
         }

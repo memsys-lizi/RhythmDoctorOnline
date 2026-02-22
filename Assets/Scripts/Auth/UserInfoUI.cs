@@ -226,9 +226,9 @@ namespace RDOnline.Auth
         {
             WebSocketManager.Instance.Send("auth/online", new { }, (res) =>
             {
-                if (res.Success && res.Data != null)
+                if (res.success && res.data != null)
                 {
-                    int count = res.Data["count"]?.ToObject<int>() ?? 0;
+                    int count = res.data["count"]?.ToObject<int>() ?? 0;
                     UpdateOnlineCount(count);
                 }
             });

@@ -207,15 +207,15 @@ namespace RDOnline.ScnRoom
             {
                 _isUpdating = false;
 
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[RoomUpdater] 房间更新成功");
                     ScrAlert.Show("房间信息已更新", true);
                 }
                 else
                 {
-                    Debug.LogError($"[RoomUpdater] 房间更新失败: {res.Message}");
-                    ScrAlert.Show($"更新失败: {res.Message}", true);
+                    Debug.LogError($"[RoomUpdater] 房间更新失败: {res.message}");
+                    ScrAlert.Show($"更新失败: {res.message}", true);
                 }
             });
         }

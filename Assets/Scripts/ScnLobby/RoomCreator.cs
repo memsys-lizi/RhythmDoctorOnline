@@ -146,10 +146,10 @@ namespace RDOnline.ScnLobby
             // 发送请求
             WebSocketManager.Instance.Send("room/create", data, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     // 获取房间ID
-                    string roomId = res.Data["roomId"]?.ToString();
+                    string roomId = res.data["roomId"]?.ToString();
                     Debug.Log($"[RoomCreator] 房间创建成功，房间ID: {roomId}");
 
                     // 保存房间数据到 RoomData
@@ -167,7 +167,7 @@ namespace RDOnline.ScnLobby
                 }
                 else
                 {
-                    ScrAlert.Show($"创建失败: {res.Message}", true);
+                    ScrAlert.Show($"创建失败: {res.message}", true);
 
                     // 失败时重新启用按钮
                     if (CreateButton != null)

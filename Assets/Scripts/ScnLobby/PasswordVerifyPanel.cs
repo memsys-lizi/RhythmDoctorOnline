@@ -168,15 +168,15 @@ namespace RDOnline.ScnLobby
             {
                 _isVerifying = false;
 
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[PasswordVerifyPanel] 密码验证成功");
                     OnPasswordVerified(password);
                 }
                 else
                 {
-                    Debug.LogWarning($"[PasswordVerifyPanel] 密码验证失败: {res.Message}");
-                    ScrAlert.Show($"密码验证失败: {res.Message}", true);
+                    Debug.LogWarning($"[PasswordVerifyPanel] 密码验证失败: {res.message}");
+                    ScrAlert.Show($"密码验证失败: {res.message}", true);
                 }
             });
         }

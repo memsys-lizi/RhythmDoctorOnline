@@ -249,15 +249,15 @@ namespace RDOnline.ScnRoom
 
             RDOnline.Network.WebSocketManager.Instance.Send("room/transferOwner", data, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[PlayerItem] 转让房主成功");
                     ScrAlert.Show("房主已转移", true);
                 }
                 else
                 {
-                    Debug.LogError($"[PlayerItem] 转让房主失败: {res.Message}");
-                    ScrAlert.Show($"转让失败: {res.Message}", true);
+                    Debug.LogError($"[PlayerItem] 转让房主失败: {res.message}");
+                    ScrAlert.Show($"转让失败: {res.message}", true);
                 }
             });
         }
@@ -279,15 +279,15 @@ namespace RDOnline.ScnRoom
 
             RDOnline.Network.WebSocketManager.Instance.Send("room/kick", data, (res) =>
             {
-                if (res.Success)
+                if (res.success)
                 {
                     Debug.Log("[PlayerItem] 踢出玩家成功");
                     ScrAlert.Show("玩家已被踢出", true);
                 }
                 else
                 {
-                    Debug.LogError($"[PlayerItem] 踢出玩家失败: {res.Message}");
-                    ScrAlert.Show($"踢出失败: {res.Message}", true);
+                    Debug.LogError($"[PlayerItem] 踢出玩家失败: {res.message}");
+                    ScrAlert.Show($"踢出失败: {res.message}", true);
                 }
             });
         }
