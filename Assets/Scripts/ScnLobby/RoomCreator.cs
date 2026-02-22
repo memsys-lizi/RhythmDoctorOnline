@@ -86,7 +86,7 @@ namespace RDOnline.ScnLobby
             int maxPlayers = (int)PlayerCountSlider.value;
             string password = PasswordInput.text.Trim();
             string chartUrl = ChartPreview.UploadedChartUrl;
-            string chartName = SelectedLevel.ChartName;
+            string chartName = SelectedLevel.Current != null ? SelectedLevel.ChartName : (ChartPreview.CurrentChartName ?? "");
 
             if (string.IsNullOrEmpty(chartName))
             {
@@ -111,16 +111,17 @@ namespace RDOnline.ScnLobby
                 return false;
             }
 
-            // 检查是否已选择社区关卡（选中后 ChartPreview 会设置 UploadedChartUrl）
             if (ChartPreview == null || string.IsNullOrEmpty(ChartPreview.UploadedChartUrl))
             {
-                ScrAlert.Show("请先在左侧选择关卡", true);
+                ScrAlert.Show("请先选择关卡或上传谱面", true);
                 return false;
             }
 
-            if (SelectedLevel.Current == null || string.IsNullOrEmpty(SelectedLevel.ChartName))
+            bool hasChartName = (SelectedLevel.Current != null && !string.IsNullOrEmpty(SelectedLevel.ChartName))
+                || !string.IsNullOrEmpty(ChartPreview.CurrentChartName);
+            if (!hasChartName)
             {
-                ScrAlert.Show("请先在左侧选择关卡", true);
+                ScrAlert.Show("请先在左侧选择关卡或通过文件浏览选择谱面并上传", true);
                 return false;
             }
 

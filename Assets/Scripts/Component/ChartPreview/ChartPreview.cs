@@ -54,6 +54,12 @@ namespace RDOnline.Component
         private LevelDocument _lastDisplayedLevel;
         private Coroutine _loadCoverUrlCoroutine;
         private bool _previewFromLocalFile;
+        private string _currentChartName;
+
+        /// <summary>
+        /// 当前谱面名称（本地文件加载时由解析得到，供创建房间等使用）
+        /// </summary>
+        public string CurrentChartName => _currentChartName;
 
         /// <summary>
         /// IChartPreview 接口实现 - 是否正在播放
@@ -90,23 +96,21 @@ namespace RDOnline.Component
 
         private void Update()
         {
-            if (_previewFromLocalFile)
-                return;
-            if (SelectedLevel.Current == null)
+            if (!_previewFromLocalFile)
             {
-                if (_lastDisplayedLevel != null)
-                    ClearCommunityLevel();
-            }
-            else if (SelectedLevel.Current != _lastDisplayedLevel)
-            {
-                SetLevelFromCommunity(SelectedLevel.Current);
+                if (SelectedLevel.Current == null)
+                {
+                    if (_lastDisplayedLevel != null)
+                        ClearCommunityLevel();
+                }
+                else if (SelectedLevel.Current != _lastDisplayedLevel)
+                {
+                    SetLevelFromCommunity(SelectedLevel.Current);
+                }
             }
 
-            // 封面旋转动画
             if (CoverImage != null && CoverImage.texture != null)
-            {
                 CoverImage.transform.Rotate(0, 0, -RotationSpeed * Time.deltaTime);
-            }
         }
 
         /// <summary>
@@ -115,6 +119,7 @@ namespace RDOnline.Component
         private void SetLevelFromCommunity(LevelDocument doc)
         {
             _previewFromLocalFile = false;
+            _currentChartName = null;
             _lastDisplayedLevel = doc;
             UploadedChartUrl = !string.IsNullOrEmpty(doc.url2) ? doc.url2 : doc.url;
 
@@ -152,6 +157,7 @@ namespace RDOnline.Component
         private void ClearCommunityLevel()
         {
             _previewFromLocalFile = false;
+            _currentChartName = null;
             _lastDisplayedLevel = null;
             UploadedChartUrl = null;
             if (SongNameText != null) SongNameText.text = "";
@@ -232,6 +238,7 @@ namespace RDOnline.Component
             songName = RemoveHtmlTags(songName);
             author = RemoveHtmlTags(author);
 
+            _currentChartName = songName;
             if (SongNameText != null)
                 SongNameText.text = songName;
             if (AuthorText != null)

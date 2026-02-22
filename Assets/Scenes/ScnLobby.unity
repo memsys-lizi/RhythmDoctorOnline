@@ -4261,7 +4261,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2005658118034612091}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999984
+  m_Size: 0.9999831
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6571,6 +6571,7 @@ MonoBehaviour:
   AudioSource: {fileID: 9100177713017320345}
   ProgressBar: {fileID: 5707306874911183214}
   UploadButton: {fileID: 8221060680580998006}
+  FileBrowseButton: {fileID: 979986425}
   RotationSpeed: 30
   UploadedChartUrl: 
 --- !u!222 &3044404462795485571
@@ -7068,7 +7069,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000018655364}
+  m_AnchoredPosition: {x: 0, y: 0.00056990865}
   m_SizeDelta: {x: 0, y: 760.87}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &3536568954295351545
@@ -8420,7 +8421,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8249055982205776741}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
