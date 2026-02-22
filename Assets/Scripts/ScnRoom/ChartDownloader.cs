@@ -31,6 +31,8 @@ namespace RDOnline.ScnRoom
         private string _currentChartUrl;
         private Action _lastOnSuccess;
         private Action<string> _lastOnError;
+        private UnityWebRequest _currentRequest;
+        private bool _cancelRequested = false;
 
         private void Awake()
         {
@@ -123,15 +125,36 @@ namespace RDOnline.ScnRoom
             string zipFilePath = Path.Combine(_chartDirectory, "chart.zip");
             UnityWebRequest request = UnityWebRequest.Get(chartUrl);
             request.downloadHandler = new DownloadHandlerFile(zipFilePath);
+            _currentRequest = request;
 
             var operation = request.SendWebRequest();
 
-            // 持续更新进度条
+            // 持续更新进度条，并检测取消
             while (!operation.isDone)
             {
+                if (_cancelRequested)
+                {
+                    request.Abort();
+                    _currentRequest = null;
+                    _isDownloading = false;
+                    _cancelRequested = false;
+                    UpdateProgressBar(0f);
+                    Debug.Log("[ChartDownloader] 下载已取消（例如房主更换了谱面）");
+                    yield break;
+                }
                 float progress = request.downloadProgress;
                 UpdateProgressBar(progress * 0.9f); // 下载占90%进度
                 yield return null;
+            }
+
+            _currentRequest = null;
+            if (_cancelRequested)
+            {
+                _isDownloading = false;
+                _cancelRequested = false;
+                UpdateProgressBar(0f);
+                Debug.Log("[ChartDownloader] 下载已取消（例如房主更换了谱面）");
+                yield break;
             }
 
             if (request.result != UnityWebRequest.Result.Success)
@@ -273,6 +296,16 @@ namespace RDOnline.ScnRoom
         public bool IsDownloading()
         {
             return _isDownloading;
+        }
+
+        /// <summary>
+        /// 取消当前下载（例如房主更换谱面时）。取消后不会调用 onError，下次 DownloadChart 可立即开始。
+        /// </summary>
+        public void CancelDownload()
+        {
+            _cancelRequested = true;
+            if (_currentRequest != null)
+                _currentRequest.Abort();
         }
 
         /// <summary>

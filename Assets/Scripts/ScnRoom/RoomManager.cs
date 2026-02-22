@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
 using RDOnline.Network;
@@ -66,6 +67,17 @@ namespace RDOnline.ScnRoom
             StartDownloadChart();
 
             _isInitialized = true;
+        }
+
+        /// <summary>
+        /// 先取消当前下载，下一帧再开始下载新谱面（用于房主换谱时）
+        /// </summary>
+        private IEnumerator CancelAndDownloadChartCoroutine()
+        {
+            if (ChartDownloader.Instance != null)
+                ChartDownloader.Instance.CancelDownload();
+            yield return null;
+            StartDownloadChart();
         }
 
         /// <summary>
@@ -256,9 +268,12 @@ namespace RDOnline.ScnRoom
                             // 更新记录的URL
                             _lastChartUrl = newChartUrl;
 
-                            // 重新下载谱面
+                            // 若正在下载则先取消，再在下一帧开始下新谱面；否则直接开始下载
                             ScrAlert.Show("房主更换了谱面，正在重新下载...", true);
-                            StartDownloadChart();
+                            if (ChartDownloader.Instance != null && ChartDownloader.Instance.IsDownloading())
+                                StartCoroutine(CancelAndDownloadChartCoroutine());
+                            else
+                                StartDownloadChart();
                         }
                     }
                 }
