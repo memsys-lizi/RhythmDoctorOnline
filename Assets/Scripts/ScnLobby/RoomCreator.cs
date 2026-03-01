@@ -36,7 +36,7 @@ namespace RDOnline.ScnLobby
                 PlayerCountSlider.minValue = 1;
                 PlayerCountSlider.maxValue = 120;
                 PlayerCountSlider.wholeNumbers = true;
-                PlayerCountSlider.value = 8;
+                PlayerCountSlider.value = 8; 
                 PlayerCountSlider.onValueChanged.AddListener(OnPlayerCountChanged);
             }
 

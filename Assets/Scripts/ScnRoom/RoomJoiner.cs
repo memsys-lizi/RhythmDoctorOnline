@@ -14,6 +14,8 @@ namespace RDOnline.ScnRoom
 
         private void Start()
         {
+            RoomData.IsInRoomFullScreen = Screen.fullScreen;
+            scnGame.pauseBlocked = false;
             // 检查是否从游戏场景返回
             if (RoomData.IsReturningFromGame)
             {

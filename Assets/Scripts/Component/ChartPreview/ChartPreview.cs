@@ -12,6 +12,7 @@ using RDOnline;
 using RDOnline.Audio;
 using RhythmCafe.Level;
 using RDOnline.ScnLobby;
+using RDOnline.Utils;
 using SFB;
 
 namespace RDOnline.Component
@@ -175,10 +176,10 @@ namespace RDOnline.Component
         /// </summary>
         private void OnFileBrowseClick()
         {
-            string[] paths = StandaloneFileBrowser.OpenFilePanel("选择谱面文件", "", "rdlevel", false);
-            if (paths.Length > 0 && !string.IsNullOrEmpty(paths[0]))
+            string path = Native.OpenFile("RD Level(*.rdlevel)\0*.rdlevel\0",null, "选择关卡文件");
+            if (!string.IsNullOrEmpty(path))
             {
-                LoadChart(paths[0]);
+                LoadChart(path);
                 _lastDisplayedLevel = null;
             }
             //ScrAlert.Show("当前平台不支持文件选择", true);
