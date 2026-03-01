@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
@@ -176,7 +177,14 @@ namespace RDOnline.Component
         /// </summary>
         private void OnFileBrowseClick()
         {
-            string path = Native.OpenFile("RD Level(*.rdlevel)\0*.rdlevel\0",null, "选择关卡文件");
+            string path = FileDialog.FileDialog.GetFileDialog().OpenFile("选择文件", "",new FileDialog.OpenFileFilter
+            {
+                Filter = new Dictionary<string, List<string>>
+                {
+                    { "关卡文件", new List<string> { "*.rdlevel" } }
+                },
+                IncludeAllFiles = true
+            });
             if (!string.IsNullOrEmpty(path))
             {
                 LoadChart(path);
