@@ -60,6 +60,12 @@ namespace RDOnline.Utils
                 {
                     result = resourcesBundle.LoadAsset<T>(resourcesBundle.GetAllAssetNames().First(a => a.Contains(pathOrName)));
                 }
+
+                if (result != null && typeof(T) == typeof(Shader))
+                {
+                    //InternalErrorShader
+                    if (result.name == "Hidden/InternalErrorShader") continue;
+                }
                 if (result != null) return result;
             }
             return result;
