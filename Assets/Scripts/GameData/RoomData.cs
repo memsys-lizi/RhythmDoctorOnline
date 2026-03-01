@@ -30,6 +30,7 @@ namespace RDOnline
         /// </summary>
         public static bool IsReturningFromGame = false;
 
+        public static bool IsInRoomFullScreen = Screen.fullScreen;
         [Header("当前房间信息")]
         [Tooltip("房间ID")]
         public string RoomId;
@@ -68,8 +69,7 @@ namespace RDOnline
                 Destroy(gameObject);
                 return;
             }
-
-            CurrentScore = GameUtils.GetCurrentScore();
+            
             Instance = this;
         }
 

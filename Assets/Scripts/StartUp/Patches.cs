@@ -47,7 +47,7 @@ namespace RDOnline
                     };
                     RankScore = rankScore;
                     //按住Alt+Enter后松开
-                    if (!Screen.fullScreen)
+                    if (RoomData.IsInRoomFullScreen && !Screen.fullScreen)
                     {
                         Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, FullScreenMode.FullScreenWindow);
                     }
