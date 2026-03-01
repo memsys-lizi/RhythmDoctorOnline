@@ -14,7 +14,7 @@ namespace RDOnline.Utils
         public AssetBundle sceneBundle;        
         public AssetBundle[] resourcesBundles;
         
-        private readonly string LoadPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),"CacheAssets");
+        private readonly string LoadPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
         private AssetBundleManager()
         {
             try
@@ -34,7 +34,7 @@ namespace RDOnline.Utils
                 if (resourcesBundles == null)
                 {
                     resourcesBundles = Directory.GetFiles(LoadPath, "*.assets").ToList()
-                        .Where(a => a.StartsWith("rdol.resources")).Select(AssetBundle.LoadFromFile).ToArray();
+                        .Where(a => Path.GetFileName(a).StartsWith("rdol.resources")).Select(AssetBundle.LoadFromFile).ToArray();
                 }
             }
             catch (Exception e)
@@ -56,9 +56,16 @@ namespace RDOnline.Utils
             foreach (var resourcesBundle in resourcesBundles)
             {
                 result = resourcesBundle.LoadAsset<T>(pathOrName);
-                if (result == null)
+                try
                 {
-                    result = resourcesBundle.LoadAsset<T>(resourcesBundle.GetAllAssetNames().First(a => a.Contains(pathOrName)));
+                    if (result == null)
+                    {
+                        result = resourcesBundle.LoadAsset<T>(resourcesBundle.GetAllAssetNames().First(a => a.Contains(pathOrName)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning(e);
                 }
 
                 if (result != null && typeof(T) == typeof(Shader))

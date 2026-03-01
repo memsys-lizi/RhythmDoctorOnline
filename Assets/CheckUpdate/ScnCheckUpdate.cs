@@ -109,7 +109,7 @@ public class ScnCheckUpdate : MonoBehaviour
         LoadAssemblyAndMetadata();
         scenesBundle = AssetBundle.LoadFromFile(Path.Combine(BepInModEntry.modPath,"CacheAssets","rdol.scenes.assets"));
         var array = Directory.GetFiles(Path.Combine(BepInModEntry.modPath,"CacheAssets"), "*.assets").ToList()
-            .Where(a => a.StartsWith("rdol.resources")).Select(AssetBundle.LoadFromFile).ToArray();
+            .Where(a => Path.GetFileName(a).StartsWith("rdol.resources")).Select(AssetBundle.LoadFromFile).ToArray();
         if (array.Length > 0) Debug.Log("assetbundle loaded");
     }
 
