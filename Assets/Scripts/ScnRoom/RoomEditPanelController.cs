@@ -41,7 +41,7 @@ namespace RDOnline.ScnRoom
         /// <summary>
         /// 切换面板打开/关闭状态
         /// </summary>
-        private void TogglePanel()
+        public void TogglePanel()
         {
             if (PanelContainer == null)
             {

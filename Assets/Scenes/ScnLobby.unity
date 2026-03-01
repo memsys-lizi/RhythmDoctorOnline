@@ -1890,34 +1890,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: UserInfoUI
       objectReference: {fileID: 0}
-    - target: {fileID: 7312965131393824694, guid: 482614baafbfc0a479d731b8c58c2a8a, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9f4c761019fdc114582ef22210ed8264, type: 2}
-    - target: {fileID: 7312965131393824694, guid: 482614baafbfc0a479d731b8c58c2a8a, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 3919045396158405862, guid: 9f4c761019fdc114582ef22210ed8264, type: 2}
-    - target: {fileID: 7786123297250182482, guid: 482614baafbfc0a479d731b8c58c2a8a, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9f4c761019fdc114582ef22210ed8264, type: 2}
-    - target: {fileID: 7786123297250182482, guid: 482614baafbfc0a479d731b8c58c2a8a, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 3919045396158405862, guid: 9f4c761019fdc114582ef22210ed8264, type: 2}
-    - target: {fileID: 8653837535106653184, guid: 482614baafbfc0a479d731b8c58c2a8a, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 9f4c761019fdc114582ef22210ed8264, type: 2}
-    - target: {fileID: 8653837535106653184, guid: 482614baafbfc0a479d731b8c58c2a8a, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 3919045396158405862, guid: 9f4c761019fdc114582ef22210ed8264, type: 2}
-    - target: {fileID: 8676469847845776791, guid: 482614baafbfc0a479d731b8c58c2a8a, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4261,7 +4233,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2005658118034612091}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999973
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7178,7 +7150,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000102622434}
+  m_AnchoredPosition: {x: 0, y: 0.000071564}
   m_SizeDelta: {x: 0, y: 760.87}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &3536568954295351545
@@ -8651,7 +8623,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 25.55
+  m_fontSize: 25.6
   m_fontSizeBase: 29.4
   m_fontWeight: 400
   m_enableAutoSizing: 1
