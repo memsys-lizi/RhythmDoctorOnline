@@ -73,6 +73,11 @@ namespace RDOnline.Component
         /// </summary>
         public event Action<string> OnUploadSuccess;
 
+        /// <summary>
+        /// 谱面可用状态变化事件（true=有可用的谱面URL，false=没有）
+        /// </summary>
+        public event Action<bool> OnChartAvailabilityChanged;
+
         private void Start()
         {
             // 绑定按钮事件
@@ -98,8 +103,18 @@ namespace RDOnline.Component
 
         private void Update()
         {
-            if (!_previewFromLocalFile)
+            // 如果当前是本地文件模式，只检查是否有新的社区关卡选择（用于切换）
+            if (_previewFromLocalFile)
             {
+                if (SelectedLevel.Current != null && SelectedLevel.Current != _lastDisplayedLevel)
+                {
+                    // 用户选择了社区关卡，切换到社区模式
+                    SetLevelFromCommunity(SelectedLevel.Current);
+                }
+            }
+            else
+            {
+                // 社区模式下的逻辑
                 if (SelectedLevel.Current == null)
                 {
                     if (_lastDisplayedLevel != null)
@@ -120,10 +135,14 @@ namespace RDOnline.Component
         /// </summary>
         private void SetLevelFromCommunity(LevelDocument doc)
         {
+            // 切换到社区关卡模式
             _previewFromLocalFile = false;
             _currentChartName = null;
             _lastDisplayedLevel = doc;
             UploadedChartUrl = !string.IsNullOrEmpty(doc.url2) ? doc.url2 : doc.url;
+
+            // 通知谱面可用状态变化
+            OnChartAvailabilityChanged?.Invoke(!string.IsNullOrEmpty(UploadedChartUrl));
 
             if (SongNameText != null)
                 SongNameText.text = doc.song ?? "Unknown";
@@ -158,10 +177,14 @@ namespace RDOnline.Component
 
         private void ClearCommunityLevel()
         {
+            // 切换到无谱面状态
             _previewFromLocalFile = false;
             _currentChartName = null;
             _lastDisplayedLevel = null;
             UploadedChartUrl = null;
+
+            // 通知谱面不可用
+            OnChartAvailabilityChanged?.Invoke(false);
             if (SongNameText != null) SongNameText.text = "";
             if (AuthorText != null) AuthorText.text = "";
             if (CoverImage != null) CoverImage.texture = null;
@@ -220,6 +243,13 @@ namespace RDOnline.Component
             _currentChartPath = chartPath;
             _currentChartFolder = Path.GetDirectoryName(chartPath);
 
+            // 设置 CurrentChartName 为文件名（不带扩展名）
+            _currentChartName = Path.GetFileNameWithoutExtension(chartPath);
+
+            // 清空社区关卡选择，防止 Update() 覆盖本地文件设置
+            _lastDisplayedLevel = null;
+            SelectedLevel.Set(null);
+
             string content = File.ReadAllText(chartPath);
             ParseChartData(content);
 
@@ -247,7 +277,7 @@ namespace RDOnline.Component
             songName = RemoveHtmlTags(songName);
             author = RemoveHtmlTags(author);
 
-            _currentChartName = songName;
+            // 注意：不要在这里设置 _currentChartName，它应该在 LoadChart 中设置为文件名
             if (SongNameText != null)
                 SongNameText.text = songName;
             if (AuthorText != null)
@@ -457,6 +487,10 @@ namespace RDOnline.Component
             {
                 UploadedChartUrl = resultUrl;
                 OnUploadSuccess?.Invoke(resultUrl);
+
+                // 通知谱面可用
+                OnChartAvailabilityChanged?.Invoke(true);
+
                 ScrAlert.Show("谱面上传成功！", true);
             }
 

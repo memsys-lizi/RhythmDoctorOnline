@@ -30,6 +30,7 @@ namespace RDOnline.ScnRoom
         public ChartPreview ChartPreview;
 
         private bool _isUpdating = false;
+        private bool _hasChartChanged = false;
 
         private void Start()
         {
@@ -46,8 +47,91 @@ namespace RDOnline.ScnRoom
             if (UpdateButton != null)
                 UpdateButton.onClick.AddListener(OnUpdateButtonClick);
 
+            // 监听谱面可用状态变化
+            if (ChartPreview != null)
+            {
+                ChartPreview.OnChartAvailabilityChanged += OnChartAvailabilityChanged;
+            }
+
+            // 监听输入变化
+            if (RoomNameInput != null)
+                RoomNameInput.onValueChanged.AddListener(_ => UpdateButtonState());
+            if (PlayerCountSlider != null)
+                PlayerCountSlider.onValueChanged.AddListener(_ => UpdateButtonState());
+            if (PasswordInput != null)
+                PasswordInput.onValueChanged.AddListener(_ => UpdateButtonState());
+
             // 加载当前房间信息到输入框
             LoadCurrentRoomInfo();
+        }
+
+        private void OnDestroy()
+        {
+            // 取消监听
+            if (ChartPreview != null)
+            {
+                ChartPreview.OnChartAvailabilityChanged -= OnChartAvailabilityChanged;
+            }
+        }
+
+        /// <summary>
+        /// 谱面可用状态变化回调
+        /// </summary>
+        private void OnChartAvailabilityChanged(bool isAvailable)
+        {
+            // 检查谱面是否真的更换了（URL不同）
+            if (isAvailable && ChartPreview != null && RoomData.Instance != null)
+            {
+                string newChartUrl = ChartPreview.UploadedChartUrl;
+                string currentChartUrl = RoomData.Instance.ChartUrl;
+                _hasChartChanged = !string.IsNullOrEmpty(newChartUrl) && newChartUrl != currentChartUrl;
+            }
+            else
+            {
+                _hasChartChanged = false;
+            }
+
+            UpdateButtonState();
+        }
+
+        /// <summary>
+        /// 更新按钮状态（根据是否有修改来启用/禁用）
+        /// </summary>
+        private void UpdateButtonState()
+        {
+            if (UpdateButton == null || RoomData.Instance == null)
+                return;
+
+            bool hasChanges = HasAnyChanges();
+            UpdateButton.interactable = hasChanges;
+        }
+
+        /// <summary>
+        /// 检查是否有任何修改
+        /// </summary>
+        private bool HasAnyChanges()
+        {
+            if (RoomData.Instance == null)
+                return false;
+
+            // 检查房间名称
+            if (RoomNameInput != null && RoomNameInput.text.Trim() != RoomData.Instance.RoomName)
+                return true;
+
+            // 检查最大人数
+            if (PlayerCountSlider != null && (int)PlayerCountSlider.value != RoomData.Instance.MaxPlayers)
+                return true;
+
+            // 检查密码
+            string currentPassword = RoomData.Instance.Password ?? "";
+            if (PasswordInput != null && PasswordInput.text.Trim() != currentPassword)
+                return true;
+
+            // 检查谱面是否更换
+            if (_hasChartChanged)
+                return true;
+
+            return false;
         }
 
         /// <summary>
@@ -82,6 +166,9 @@ namespace RDOnline.ScnRoom
 
             // 更新人数显示
             UpdatePlayerCountText();
+
+            // 初始化按钮状态
+            UpdateButtonState();
 
             Debug.Log("[RoomUpdater] 已加载当前房间信息到输入框");
         }
@@ -127,14 +214,22 @@ namespace RDOnline.ScnRoom
             int maxPlayers = (int)PlayerCountSlider.value;
             string password = PasswordInput.text.Trim();
 
-            // 检查是否有谱面更换（用户新选了社区关卡时）
+            // 检查是否有谱面更换
             string chartUrl = null;
             string chartName = null;
-            if (ChartPreview != null && !string.IsNullOrEmpty(ChartPreview.UploadedChartUrl) &&
-                SelectedLevel.Current != null && !string.IsNullOrEmpty(SelectedLevel.ChartName))
+            if (ChartPreview != null && !string.IsNullOrEmpty(ChartPreview.UploadedChartUrl))
             {
-                chartUrl = ChartPreview.UploadedChartUrl;
-                chartName = SelectedLevel.ChartName;
+                // 优先使用社区关卡的名称，否则使用本地文件的名称
+                if (SelectedLevel.Current != null && !string.IsNullOrEmpty(SelectedLevel.ChartName))
+                {
+                    chartUrl = ChartPreview.UploadedChartUrl;
+                    chartName = SelectedLevel.ChartName;
+                }
+                else if (!string.IsNullOrEmpty(ChartPreview.CurrentChartName))
+                {
+                    chartUrl = ChartPreview.UploadedChartUrl;
+                    chartName = ChartPreview.CurrentChartName;
+                }
             }
 
             // 发送更新房间请求
@@ -211,11 +306,20 @@ namespace RDOnline.ScnRoom
                 {
                     Debug.Log("[RoomUpdater] 房间更新成功");
                     ScrAlert.Show("房间信息已更新", true);
+
+                    // 重置谱面更换标志
+                    _hasChartChanged = false;
+
+                    // 重新加载房间信息（服务器可能会返回更新后的数据）
+                    LoadCurrentRoomInfo();
                 }
                 else
                 {
                     Debug.LogError($"[RoomUpdater] 房间更新失败: {res.message}");
                     ScrAlert.Show($"更新失败: {res.message}", true);
+
+                    // 更新按钮状态
+                    UpdateButtonState();
                 }
             });
         }

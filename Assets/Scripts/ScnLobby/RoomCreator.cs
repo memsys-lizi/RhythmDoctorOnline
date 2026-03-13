@@ -36,7 +36,7 @@ namespace RDOnline.ScnLobby
                 PlayerCountSlider.minValue = 1;
                 PlayerCountSlider.maxValue = 120;
                 PlayerCountSlider.wholeNumbers = true;
-                PlayerCountSlider.value = 8; 
+                PlayerCountSlider.value = 8;
                 PlayerCountSlider.onValueChanged.AddListener(OnPlayerCountChanged);
             }
 
@@ -46,6 +46,46 @@ namespace RDOnline.ScnLobby
             // 绑定创建按钮
             if (CreateButton != null)
                 CreateButton.onClick.AddListener(OnCreateButtonClick);
+
+            // 监听谱面可用状态变化
+            if (ChartPreview != null)
+            {
+                ChartPreview.OnChartAvailabilityChanged += OnChartAvailabilityChanged;
+                // 初始化按钮状态
+                UpdateCreateButtonState();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            // 取消监听
+            if (ChartPreview != null)
+            {
+                ChartPreview.OnChartAvailabilityChanged -= OnChartAvailabilityChanged;
+            }
+        }
+
+        /// <summary>
+        /// 谱面可用状态变化回调
+        /// </summary>
+        private void OnChartAvailabilityChanged(bool isAvailable)
+        {
+            UpdateCreateButtonState();
+        }
+
+        /// <summary>
+        /// 更新创建按钮状态
+        /// </summary>
+        private void UpdateCreateButtonState()
+        {
+            if (CreateButton == null || ChartPreview == null)
+                return;
+
+            bool hasChart = !string.IsNullOrEmpty(ChartPreview.UploadedChartUrl);
+            bool hasChartName = (SelectedLevel.Current != null && !string.IsNullOrEmpty(SelectedLevel.ChartName))
+                || !string.IsNullOrEmpty(ChartPreview.CurrentChartName);
+
+            CreateButton.interactable = hasChart && hasChartName;
         }
 
         /// <summary>
